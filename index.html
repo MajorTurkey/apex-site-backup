@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Apex Field Service LLC</title>
 <meta name="description" content="Apex sees it, documents it, and reports it accurately.">
-<meta property="og:title" content="Apex Field Service llc"><meta name="twitter:title" content="Apex Field Service llc"><meta property="og:image" content="https://apexfieldservicellc.com/official-logo.png">
+<meta property="og:title" content="Apex Field Service llc"><meta name="twitter:title" content="Apex Field Service llc"><meta property="og:image" content="https://apexfieldservicellc.com/apex-banner.png?v=3">
 <meta name="theme-color" content="#1e4d38"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="official-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@ body{margin:0;min-height:100dvh}a{color:var(--steel)}button{font:inherit}:focus-
 .display{font-family:"Newsreader","Iowan Old Style",Georgia,serif;font-weight:500;line-height:1;margin:0}
 header{display:flex;align-items:center;gap:12px;max-width:64rem;margin:0 auto;padding:14px 20px}
 header img{height:48px;width:auto;border-radius:0;object-fit:contain;background:transparent}header span{font-weight:600}
-.logo{display:block;width:min(100%,36rem);height:auto;margin:8px auto 0;object-fit:contain;background:transparent}
+.logo{display:block;width:min(100% - 40px, 52rem);height:auto;margin:12px auto 0;object-fit:contain;background:#fff;border-radius:16px}
 main{max-width:64rem;margin:0 auto;padding:32px 20px 48px}
 h1.display{font-size:3rem}.lead{margin-top:12px;font-size:1.125rem}.muted{color:var(--muted);margin-top:8px}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:20px}@media(min-width:640px){.grid{grid-template-columns:repeat(3,1fr)}}
@@ -25,7 +25,7 @@ h1.display{font-size:3rem}.lead{margin-top:12px;font-size:1.125rem}.muted{color:
 footer{border-top:1px solid var(--line);max-width:64rem;margin:0 auto;padding:20px;font-size:.95rem}
 </style></head><body>
 <header><img src="official-logo.png" alt=""><span>Apex Field Service LLC</span></header>
-<img class="logo" src="official-logo.png" alt="Apex Field Service LLC">
+<img class="logo" src="apex-banner.png?v=3" alt="Apex Field Service LLC">
 <main>
 <h1 class="display">File a job</h1>
 <p class="lead">Apex sees it, documents it, and reports it accurately.</p>
@@ -59,5 +59,12 @@ var box=document.getElementById("jack");
 document.getElementById("open-serve").onclick=function(){box.style.display="flex"};
 document.getElementById("close-serve").onclick=function(){box.style.display="none"};
 box.onclick=function(e){if(e.target===box)box.style.display="none"};
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function (list) {
+    list.forEach(function (r) { r.unregister(); });
+  });
+}
 </script>
 </body></html>
