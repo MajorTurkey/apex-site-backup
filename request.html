@@ -19,7 +19,8 @@ textarea{min-height:96px}
 .choices{display:grid;gap:8px}
 .choice{display:flex;min-height:52px;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff;border:1px solid var(--line);border-radius:12px;cursor:pointer}
 .choice.on{border-color:var(--steel);background:#e7f3ec}
-.check{display:flex;gap:10px;align-items:center;min-height:40px}
+.check{display:flex;flex-direction:row;justify-content:flex-start;align-items:flex-start;gap:10px;min-height:40px;width:100%;text-align:left}
+.check input,.choice input[type=radio]{width:1.15rem;min-width:1.15rem;max-width:1.15rem;height:1.15rem;min-height:1.15rem;margin:3px 0 0;padding:0;flex:0 0 auto}
 .send{min-height:48px;border:0;border-radius:999px;background:var(--steel);color:#fff;padding:0 18px;cursor:pointer}
 .note{color:var(--muted);font-size:.95rem}
 .done{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px}
