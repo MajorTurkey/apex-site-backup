@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1e4d38">
+<title>Jack's Desk</title>
+<style>
+:root{--ink:#1c2420;--muted:#4f5a54;--line:#d5ddd6;--steel:#1e4d38;--canvas:#f4f7f5}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--canvas);color:var(--ink);font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--steel);color:#fff}
+main{max-width:64rem;margin:0 auto;padding:24px 20px 64px}
+label{display:block;margin:12px 0 6px}
+input,textarea{width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff}
+textarea{min-height:88px}
+button{min-height:44px;border-radius:999px;border:0;background:var(--steel);color:#fff;padding:0 18px;font:inherit}
+.job{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:10px}
+.muted{color:var(--muted)}
+</style>
+</head>
+<body>
+<header><b>Jack's Desk</b></header>
+<main>
+<p class="muted">Jobs stay on this tablet. This desk does not use Vercel.</p>
+<label for="title">Job</label>
+<input id="title" placeholder="Customer or address">
+<label for="note">Note</label>
+<textarea id="note"></textarea>
+<p><button id="save" type="button">Save on this desk</button></p>
+<div id="list"></div>
+</main>
+<script>
+var KEY="jacks-desk-local";
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){return []}}
+function draw(){
+  var list=document.getElementById("list");
+  list.innerHTML="";
+  load().slice().reverse().forEach(function(job){
+    var el=document.createElement("div");
+    el.className="job";
+    el.innerHTML="<b></b><div class='muted'></div>";
+    el.children[0].textContent=job.title;
+    el.children[1].textContent=job.note||"";
+    list.appendChild(el);
+  });
+}
+document.getElementById("save").onclick=function(){
+  var title=document.getElementById("title").value.trim();
+  if(!title) return;
+  var jobs=load();
+  jobs.push({title:title,note:document.getElementById("note").value.trim(),at:new Date().toISOString()});
+  localStorage.setItem(KEY, JSON.stringify(jobs));
+  document.getElementById("title").value="";
+  document.getElementById("note").value="";
+  draw();
+};
+draw();
+</script>
+</body>
+</html>

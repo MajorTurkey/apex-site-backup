@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1e4d38">
+<title>Field phone</title>
+<style>
+:root{--ink:#1c2420;--muted:#4f5a54;--line:#d5ddd6;--steel:#1e4d38;--canvas:#f4f7f5}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--canvas);color:var(--ink);font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif}
+body{min-height:100dvh}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--steel);color:#fff}
+header b{font-weight:600}
+main{max-width:32rem;margin:0 auto;padding:20px 16px 48px}
+label{display:block;font-size:.9rem;margin:14px 0 6px}
+input,textarea{width:100%;min-height:48px;padding:12px;border:1px solid var(--line);border-radius:12px;font:inherit;background:#fff}
+textarea{min-height:96px}
+button,.pill{min-height:48px;border-radius:999px;border:0;font:inherit;padding:0 18px}
+.primary{background:var(--steel);color:#fff;width:100%;margin-top:16px}
+.ghost{background:transparent;color:var(--steel);border:1px solid var(--steel)}
+.row{display:flex;gap:8px;align-items:center;margin-top:12px}
+.job{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:10px}
+.muted{color:var(--muted);font-size:.92rem}
+.check{display:flex;gap:8px;align-items:center;margin-top:12px}
+</style>
+</head>
+<body>
+<header><b>Field phone</b><button id="out" class="ghost" hidden style="color:#fff;border-color:#fff">Sign out</button></header>
+<main>
+<section id="gate">
+<h1>Sign in</h1>
+<p class="muted">Use the last name the desk assigned.</p>
+<label for="last">Last name</label>
+<input id="last" autocomplete="username" autocapitalize="words">
+<label class="check"><input id="remember" type="checkbox" style="width:auto;min-height:0"> Remember me</label>
+<button class="primary" id="go" type="button">Sign in</button>
+<p id="err" class="muted" hidden>Enter a last name.</p>
+</section>
+<section id="work" hidden>
+<p class="muted" id="who"></p>
+<label for="title">Job</label>
+<input id="title" placeholder="Address or file name">
+<label for="note">Note</label>
+<textarea id="note"></textarea>
+<div class="row">
+<button class="ghost" id="photo" type="button">Photo</button>
+<button class="ghost" id="spot" type="button">Location</button>
+</div>
+<p class="muted" id="spotline"></p>
+<img id="pic" alt="" hidden style="width:100%;margin-top:10px;border-radius:12px">
+<button class="primary" id="save" type="button">Save on this phone</button>
+<div id="list"></div>
+</section>
+</main>
+<script>
+var KEY = "apex-field-phone";
+function load(){ try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e){ return {}; } }
+function save(d){ localStorage.setItem(KEY, JSON.stringify(d)); }
+var data = load();
+var gate = document.getElementById("gate");
+var work = document.getElementById("work");
+var last = document.getElementById("last");
+var remember = document.getElementById("remember");
+if (data.remember && data.name) { last.value = data.name; remember.checked = true; enter(data.name); }
+document.getElementById("go").onclick = function(){
+  var name = last.value.trim();
+  if (!name) { document.getElementById("err").hidden = false; return; }
+  data.name = name;
+  data.remember = remember.checked;
+  if (!data.jobs) data.jobs = [];
+  save(data);
+  enter(name);
+};
+document.getElementById("out").onclick = function(){
+  data.name = "";
+  data.remember = false;
+  save(data);
+  location.reload();
+};
+function enter(name){
+  gate.hidden = true;
+  work.hidden = false;
+  document.getElementById("out").hidden = false;
+  document.getElementById("who").textContent = name;
+  draw();
+}
+function draw(){
+  var list = document.getElementById("list");
+  list.innerHTML = "";
+  (data.jobs || []).slice().reverse().forEach(function(job){
+    var el = document.createElement("div");
+    el.className = "job";
+    el.innerHTML = "<b></b><div class='muted'></div><div class='muted'></div>";
+    el.children[0].textContent = job.title || "Job";
+    el.children[1].textContent = job.note || "";
+    el.children[2].textContent = job.where || "";
+    list.appendChild(el);
+  });
+}
+document.getElementById("spot").onclick = function(){
+  if (!navigator.geolocation) { document.getElementById("spotline").textContent = "This phone has no location."; return; }
+  navigator.geolocation.getCurrentPosition(function(p){
+    document.getElementById("spotline").textContent = p.coords.latitude.toFixed(5) + ", " + p.coords.longitude.toFixed(5);
+  }, function(){ document.getElementById("spotline").textContent = "Location was not allowed."; });
+};
+document.getElementById("photo").onclick = function(){
+  var input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.capture = "environment";
+  input.onchange = function(){
+    var file = input.files && input.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      document.getElementById("pic").src = reader.result;
+      document.getElementById("pic").hidden = false;
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+};
+document.getElementById("save").onclick = function(){
+  var title = document.getElementById("title").value.trim();
+  if (!title) return;
+  data.jobs = data.jobs || [];
+  data.jobs.push({
+    title: title,
+    note: document.getElementById("note").value.trim(),
+    where: document.getElementById("spotline").textContent,
+    at: new Date().toISOString()
+  });
+  save(data);
+  document.getElementById("title").value = "";
+  document.getElementById("note").value = "";
+  document.getElementById("spotline").textContent = "";
+  document.getElementById("pic").hidden = true;
+  draw();
+};
+</script>
+</body>
+</html>
