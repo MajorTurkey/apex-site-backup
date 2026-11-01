@@ -1,0 +1,191 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>File a job · Apex Field Service LLC</title>
+<meta name="theme-color" content="#1e4d38"><link rel="icon" href="icons/stone-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
+<style>
+:root{--canvas:#f4f7f5;--line:#d5ddd6;--ink:#1c2420;--steel:#1e4d38;--muted:#4f5a54}
+*{box-sizing:border-box}html{background:var(--canvas);color:var(--ink);font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif}
+body{margin:0}a{color:var(--steel)}button,input,select,textarea{font:inherit}
+.display{font-family:"Newsreader","Iowan Old Style",Georgia,serif;font-weight:500;line-height:1;margin:0}
+main{max-width:40rem;margin:0 auto;padding:28px 20px 64px}
+.back{display:inline-flex;min-height:44px;align-items:center;margin-bottom:12px;border:1px solid var(--steel);border-radius:999px;padding:0 18px;color:var(--steel);text-decoration:none}
+h1{font-size:3rem;margin:0 0 18px}
+form,fieldset{display:grid;gap:12px;border:0;margin:0;padding:0}
+label{display:grid;gap:4px;font-size:.95rem}
+input,select,textarea{min-height:44px;width:100%;border:1px solid var(--line);border-radius:6px;background:#fff;padding:8px 12px;color:var(--ink)}
+textarea{min-height:96px}
+.row{display:grid;grid-template-columns:1fr 5rem 6rem;gap:8px}
+.choices{display:grid;gap:8px}
+.choice{display:flex;min-height:52px;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff;border:1px solid var(--line);border-radius:12px;cursor:pointer}
+.choice.on{border-color:var(--steel);background:#e7f3ec}
+.check{display:flex;gap:10px;align-items:center;min-height:40px}
+.send{min-height:48px;border:0;border-radius:999px;background:var(--steel);color:#fff;padding:0 18px;cursor:pointer}
+.note{color:var(--muted);font-size:.95rem}
+.done{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px}
+.req{color:var(--muted)}
+</style></head><body>
+<main>
+<a class="back" href="/">Back</a>
+<h1 class="display" id="title">File a job</h1>
+<div id="serve" hidden>
+<p>Call Jack. He will set it up. This does not take the papers.</p>
+<p><a href="tel:+13603583303">(360) 358-3303</a></p>
+</div>
+<form id="job">
+<div id="who"></div>
+<div id="kind"></div>
+<button class="send" type="submit">Send to Jack</button>
+<p class="note" id="err" hidden></p>
+</form>
+<div class="done" id="done" hidden>
+<h2 class="display" style="font-size:2.2rem">Jack has the request.</h2>
+<p id="done-note"></p>
+<p><a href="/">Back to the doors</a></p>
+</div>
+</main>
+<script>
+var door = new URLSearchParams(location.search).get("door") || "";
+var names = {survey:"Survey", photos:"Insurance photos", court:"Court", medical:"Medical", serve:"Process serve"};
+var title = names[door] || "File a job";
+document.title = title + " · Apex Field Service LLC";
+document.getElementById("title").textContent = title;
+if (!names[door]) location.replace("/");
+if (door === "serve") {
+  document.getElementById("job").hidden = true;
+  document.getElementById("serve").hidden = false;
+}
+var who = document.getElementById("who");
+var kind = document.getElementById("kind");
+function field(label, name, opts) {
+  opts = opts || {};
+  var wrap = document.createElement("label");
+  wrap.innerHTML = label + (opts.required ? ' <span class="req">Required</span>' : "");
+  var el = document.createElement(opts.area ? "textarea" : opts.options ? "select" : "input");
+  el.name = name;
+  if (opts.type) el.type = opts.type;
+  if (opts.required) el.required = true;
+  if (opts.value) el.value = opts.value;
+  if (opts.options) opts.options.forEach(function (o) {
+    var op = document.createElement("option");
+    op.value = o[0]; op.textContent = o[1]; el.appendChild(op);
+  });
+  wrap.appendChild(el);
+  return wrap;
+}
+function place() {
+  var box = document.createElement("div");
+  box.className = "choices";
+  box.appendChild(field("Where", "area", {options:[["home","Home"],["work","Work"],["other","Other"]]}));
+  box.appendChild(field("Address", "address", {required:true}));
+  var row = document.createElement("div");
+  row.className = "row";
+  row.appendChild(field("City", "city"));
+  row.appendChild(field("State", "state", {value:"WA"}));
+  row.appendChild(field("ZIP", "zip"));
+  box.appendChild(row);
+  return box;
+}
+who.appendChild(field("Your name", "name", {required:true}));
+who.appendChild(field("Firm", "firm"));
+who.appendChild(field("Phone", "phone", {type:"tel", required:true}));
+who.appendChild(field("Email", "email", {type:"email", required:true}));
+if (door === "photos") {
+  who.appendChild(field("Claim or file number", "claim"));
+  who.appendChild(field("Insured", "insured"));
+  kind.appendChild(place());
+  var shots = ["Exterior of the house","Yard and outbuildings","Roof from the ground","Signs of occupancy"];
+  var bars = ["Hazards","Locked gate","Guard or keypad","Loose or aggressive dog","Dog is confined","Do not enter the yard","Lockbox","Call before you arrive","Someone will meet you","Property is vacant","Occupied, do not knock","Photos from the street only","No trespassing sign","Gated community or HOA","Long or shared driveway","Unpaved road","Livestock or electric fence","Driveway blocked or construction","Alarm or cameras","Permission already given"];
+  kind.appendChild(checks("Photos", "shot", shots, {"Exterior of the house":true}));
+  kind.appendChild(checks("Barriers", "bar", bars, {}));
+  kind.appendChild(field("Gate code, if one was given", "gate"));
+  kind.appendChild(field("Lockbox code, if one was given", "lock"));
+  kind.appendChild(field("Someone at the property", "contact"));
+  kind.appendChild(field("Their phone", "contactPhone", {type:"tel"}));
+  kind.appendChild(field("Best time", "when"));
+  kind.appendChild(field("Anything else Jack should know", "other", {area:true}));
+  kind.insertAdjacentHTML("beforeend", '<p class="note">The email that opens is the request. Add the pictures to that email before you send it. The price shown starts at $65.</p>');
+}
+if (door === "survey") {
+  kind.appendChild(radios("Survey", "survey", [["occupancy","Occupancy and exterior","$50"],["commercial","Commercial property","$100"],["delinquency","Delinquency contact","$60"]], "occupancy"));
+  kind.appendChild(place());
+  kind.appendChild(field("File number, if there is one", "file"));
+  kind.appendChild(field("Anything else Jack should know", "other", {area:true}));
+}
+if (door === "court") {
+  kind.insertAdjacentHTML("beforeend", '<p class="note">A filing or a pickup. Jack runs it. This is not a process serve.</p>');
+  kind.appendChild(radios("Court work", "work", [["filing","Filing","$50"],["retrieval","Pickup","$60"]], "filing"));
+  kind.appendChild(field("Court", "court", {required:true}));
+  kind.appendChild(field("County", "county"));
+  kind.appendChild(field("Case number", "case"));
+  kind.appendChild(field("What to file or pick up", "papers", {area:true, required:true}));
+}
+if (door === "medical") {
+  kind.appendChild(radios("Delivery", "work", [["records","Records courier","$60"],["transport","Sealed transport","$85"],["facility","Facility survey","$75"]], "records"));
+  kind.appendChild(field("Where", "where", {required:true}));
+  kind.appendChild(place());
+  kind.appendChild(field("Anything else Jack should know", "other", {area:true}));
+}
+function radios(label, name, items, picked) {
+  var set = document.createElement("fieldset");
+  var p = document.createElement("p"); p.textContent = label; set.appendChild(p);
+  items.forEach(function (item) {
+    var lab = document.createElement("label"); lab.className = "choice" + (item[0]===picked?" on":"");
+    lab.innerHTML = "<span><input type='radio' name='"+name+"' value='"+item[0]+"'"+(item[0]===picked?" checked":"")+"> "+item[1]+"</span><b>"+item[2]+"</b>";
+    lab.querySelector("input").onchange = function () {
+      set.querySelectorAll(".choice").forEach(function (n) { n.classList.remove("on"); });
+      lab.classList.add("on");
+    };
+    set.appendChild(lab);
+  });
+  return set;
+}
+function checks(label, name, items, on) {
+  var set = document.createElement("fieldset");
+  var p = document.createElement("p"); p.textContent = label; set.appendChild(p);
+  items.forEach(function (item) {
+    var lab = document.createElement("label"); lab.className = "check";
+    var box = document.createElement("input"); box.type = "checkbox"; box.name = name; box.value = item; box.checked = !!on[item];
+    lab.appendChild(box); lab.appendChild(document.createTextNode(" " + item));
+    set.appendChild(lab);
+  });
+  return set;
+}
+document.getElementById("job").onsubmit = function (event) {
+  event.preventDefault();
+  var data = new FormData(event.target);
+  var lines = [title];
+  event.target.querySelectorAll("input,select,textarea").forEach(function (el) {
+    if (!el.name || el.type === "radio" || el.type === "checkbox") return;
+    var value = (el.value || "").trim();
+    if (!value) return;
+    var name = el.closest("label");
+    var label = name ? name.childNodes[0].textContent.trim() : el.name;
+    lines.push(label + ": " + value);
+  });
+  ["survey","work"].forEach(function (name) {
+    var picked = event.target.querySelector("input[name='"+name+"']:checked");
+    if (picked) lines.push(picked.parentElement.textContent.trim());
+  });
+  ["shot","bar"].forEach(function (name) {
+    var picked = Array.from(event.target.querySelectorAll("input[name='"+name+"']:checked")).map(function (n) { return n.value; });
+    if (picked.length) lines.push((name==="shot"?"Photos":"Barriers") + ": " + picked.join(", "));
+  });
+  lines.push("", "This is not a job yet. Jack will check it.");
+  var err = document.getElementById("err");
+  var mail = "mailto:Jack@apexfieldservicellc.com?subject=" + encodeURIComponent(title + " — " + (data.get("name") || "request")) + "&body=" + encodeURIComponent(lines.join("\n"));
+  if (mail.length > 1800) {
+    err.hidden = false;
+    err.textContent = "That note is too long for an email link. Shorten the last box and send it again.";
+    return;
+  }
+  location.href = mail;
+  document.getElementById("job").hidden = true;
+  var note = document.getElementById("done-note");
+  note.textContent = door === "photos"
+    ? "Your email app should be open. Add the pictures, then send it. This is not a job yet. He will check the address."
+    : "Your email app should be open. Send that message. This is not a job yet. He will call or email.";
+  document.getElementById("done").hidden = false;
+};
+</script>
+</body></html>

@@ -31,13 +31,12 @@ footer{border-top:1px solid var(--line);max-width:64rem;margin:0 auto;padding:20
 <p class="lead">Apex sees it, documents it, and reports it accurately.</p>
 <p class="muted">Pick one. Each door has its own form.</p>
 <div class="grid">
-<a class="door" href="tel:+13603583303"><b>Process server</b><small>(360) 358-3303</small></a>
-<a class="door" href="mailto:Jack@apexfieldservicellc.com?subject=Survey"><b>Survey</b></a>
-<a class="door" href="mailto:Jack@apexfieldservicellc.com?subject=Insurance%20photos"><b>Insurance photos</b></a>
-<a class="door" href="mailto:Jack@apexfieldservicellc.com?subject=Court"><b>Court</b></a>
-<a class="door" href="mailto:Jack@apexfieldservicellc.com?subject=Medical"><b>Medical</b></a>
+<button class="door" type="button" id="open-serve"><b>Process server</b><small>Call Jack</small></button>
+<a class="door" href="request.html?door=survey"><b>Survey</b></a>
+<a class="door" href="request.html?door=photos"><b>Insurance photos</b></a>
+<a class="door" href="request.html?door=court"><b>Court</b></a>
+<a class="door" href="request.html?door=medical"><b>Medical</b></a>
 </div>
-<div class="note">The online forms are offline for a short time. Call or email Jack and he sets it up. This page does not take the papers.</div>
 <div class="contact">
 <h2 class="display" style="font-size:2.5rem">Jack</h2>
 <a class="pill fill" href="tel:+13603583303">(360) 358-3303</a>
@@ -45,4 +44,20 @@ footer{border-top:1px solid var(--line);max-width:64rem;margin:0 auto;padding:20
 </div>
 </main>
 <footer><p>Ownership: Apex Field Service LLC. Jack. <a href="mailto:Jack@apexfieldservicellc.com">Jack@apexfieldservicellc.com</a></p></footer>
+
+<div id="jack" role="dialog" aria-modal="true" aria-labelledby="jack-name" style="position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(20,28,24,.45)">
+<div style="width:min(100%,26rem);background:#fff;border:1px solid #d5ddd6;border-radius:16px;padding:24px">
+<h2 class="display" id="jack-name" style="font-size:2.5rem">Jack</h2>
+<p style="margin:14px 0 0;font-size:1.05rem;line-height:1.45">Call (360) 358-3303 or email Jack@apexfieldservicellc.com. He sets it up. This page does not take the papers.</p>
+<div style="display:grid;gap:10px;margin-top:18px">
+<a class="pill fill" href="tel:+13603583303">(360) 358-3303</a>
+<a class="pill line" href="mailto:Jack@apexfieldservicellc.com">Jack@apexfieldservicellc.com</a>
+<button type="button" id="close-serve" style="min-height:44px;border:0;background:transparent">Close</button>
+</div></div></div>
+<script>
+var box=document.getElementById("jack");
+document.getElementById("open-serve").onclick=function(){box.style.display="flex"};
+document.getElementById("close-serve").onclick=function(){box.style.display="none"};
+box.onclick=function(e){if(e.target===box)box.style.display="none"};
+</script>
 </body></html>
