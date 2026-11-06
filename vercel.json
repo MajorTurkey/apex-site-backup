@@ -1,0 +1,37 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "",
+  "installCommand": "",
+  "outputDirectory": ".",
+  "cleanUrls": false,
+  "trailingSlash": true,
+  "rewrites": [
+    { "source": "/request", "destination": "/request.html" },
+    { "source": "/request/", "destination": "/request.html" },
+    { "source": "/index", "destination": "/index.html" },
+    { "source": "/index/", "destination": "/index.html" },
+    { "source": "/404", "destination": "/404.html" },
+    { "source": "/404/", "destination": "/404.html" }
+  ],
+  "headers": [
+    {
+      "source": "/Jacks-Desk.apk",
+      "headers": [
+        { "key": "Content-Type", "value": "application/vnd.android.package-archive" }
+      ]
+    },
+    {
+      "source": "/Apex-Field-Phone.apk",
+      "headers": [
+        { "key": "Content-Type", "value": "application/vnd.android.package-archive" }
+      ]
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [
+        { "key": "Content-Type", "value": "application/manifest+json; charset=utf-8" }
+      ]
+    }
+  ]
+}
