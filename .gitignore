@@ -1,0 +1,5 @@
+.vercel
+node_modules
+builds/
+preview-*.png
+live-apps.png
